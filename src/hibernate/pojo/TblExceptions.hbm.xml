@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 18, 2015 10:03:16 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="hibernate.pojo.TblExceptions" table="tbl_exceptions" schema="pr_inplant" optimistic-lock="version">
+        <id name="IExceptionId" type="big_decimal">
+            <column name="i_exception_id" precision="32" scale="0" />
+            <generator class="native" />
+        </id>
+        <many-to-one name="tblEpos" class="hibernate.pojo.TblEpos" fetch="select">
+            <column name="i_machine_id" precision="30" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="tblMapping" class="hibernate.pojo.TblMapping" fetch="select">
+            <column name="i_trip_id" precision="32" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="tblPlant" class="hibernate.pojo.TblPlant" fetch="select">
+            <column name="i_plant_id" precision="32" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="dtCreated" type="timestamp">
+            <column name="dt_created" length="29" />
+        </property>
+        <property name="dtExpectedTime" type="timestamp">
+            <column name="dt_expected_time" length="29" />
+        </property>
+        <property name="dtArrivalTime" type="timestamp">
+            <column name="dt_arrival_time" length="29" />
+        </property>
+        <property name="BIsChecked" type="boolean">
+            <column name="b_is_checked" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

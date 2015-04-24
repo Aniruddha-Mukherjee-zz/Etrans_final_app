@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 17, 2015 9:43:48 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="hibernate.pojo.TblDriver" table="tbl_driver" schema="pr_inplant" optimistic-lock="version">
+        <id name="IDriverId" type="big_decimal">
+            <column name="i_driver_id" precision="32" scale="0" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="tblPlant" class="hibernate.pojo.TblPlant" fetch="select">
+            <column name="i_plant_id" precision="32" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="tblTransporter" class="hibernate.pojo.TblTransporter" fetch="select">
+            <column name="i_transporter_id" precision="32" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="TDriverName" type="string">
+            <column name="t_driver_name" />
+        </property>
+        <property name="TDriverAddr1" type="string">
+            <column name="t_driver_addr1" />
+        </property>
+        <property name="TDriverAddr2" type="string">
+            <column name="t_driver_addr2" />
+        </property>
+        <property name="TDriverCity" type="string">
+            <column name="t_driver_city" />
+        </property>
+        <property name="TStateId" type="string">
+            <column name="t_state_id" />
+        </property>
+        <property name="IDriverPin" type="string">
+            <column name="i_driver_pin" />
+        </property>
+        <property name="TCountryId" type="string">
+            <column name="t_country_id" />
+        </property>
+        <property name="TDriverEmailId" type="string">
+            <column name="t_driver_email_id" />
+        </property>
+        <property name="TLicenceNo" type="string">
+            <column name="t_licence_no" not-null="true" />
+        </property>
+        <property name="BIsActive" type="java.lang.Boolean">
+            <column name="b_is_active" />
+        </property>
+        <property name="TCreatedBy" type="string">
+            <column name="t_created_by" />
+        </property>
+        <property name="dtCreated" type="timestamp">
+            <column name="dt_created" length="29" />
+        </property>
+        <property name="TModifiedBy" type="string">
+            <column name="t_modified_by" />
+        </property>
+        <property name="dtModified" type="timestamp">
+            <column name="dt_modified" length="29" />
+        </property>
+        <property name="BIsDeleted" type="java.lang.Boolean">
+            <column name="b_is_deleted" />
+        </property>
+        <set name="tblMappings" table="tbl_mapping" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="i_driver_id" precision="30" scale="0" />
+            </key>
+            <one-to-many class="hibernate.pojo.TblMapping" />
+        </set>
+    </class>
+</hibernate-mapping>

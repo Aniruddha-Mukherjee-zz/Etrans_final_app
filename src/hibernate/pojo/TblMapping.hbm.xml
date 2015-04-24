@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 17, 2015 9:43:48 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="hibernate.pojo.TblMapping" table="tbl_mapping" schema="pr_inplant" optimistic-lock="version">
+        <id name="ITripId" type="big_decimal">
+            <column name="i_trip_id" precision="30" scale="0" />
+            <generator class="native" />
+        </id>
+        <many-to-one name="tblCard" class="hibernate.pojo.TblCard" fetch="select">
+            <column name="c_card_id" length="32" not-null="true" />
+        </many-to-one>
+        <many-to-one name="tblDo" class="hibernate.pojo.TblDo" fetch="select">
+            <column name="i_do_id" precision="30" scale="0" />
+        </many-to-one>
+        <many-to-one name="tblDriver" class="hibernate.pojo.TblDriver" fetch="select">
+            <column name="i_driver_id" precision="30" scale="0" />
+        </many-to-one>
+        <many-to-one name="tblLivePath" class="hibernate.pojo.TblLivePath" fetch="select">
+            <column name="i_path_id" precision="32" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="tblPlant" class="hibernate.pojo.TblPlant" fetch="select">
+            <column name="i_plant_id" precision="32" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="tblProcess" class="hibernate.pojo.TblProcess" fetch="select">
+            <column name="i_process_id" precision="30" scale="0" />
+        </many-to-one>
+        <many-to-one name="tblTransporter" class="hibernate.pojo.TblTransporter" fetch="select">
+            <column name="i_transporter_id" precision="30" scale="0" />
+        </many-to-one>
+        <many-to-one name="tblVehicle" class="hibernate.pojo.TblVehicle" fetch="select">
+            <column name="t_vehicle_id" not-null="true" />
+        </many-to-one>
+        <property name="dtCreated" type="timestamp">
+            <column name="dt_created" length="29" />
+        </property>
+        <property name="BIsActive" type="boolean">
+            <column name="b_is_active" not-null="true" />
+        </property>
+        <set name="tblExceptionses" table="tbl_exceptions" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="i_trip_id" precision="32" scale="0" not-null="true" />
+            </key>
+            <one-to-many class="hibernate.pojo.TblExceptions" />
+        </set>
+        <set name="tblVehicleFlights" table="tbl_vehicle_flight" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="i_trip_id" precision="50" scale="0" not-null="true" />
+            </key>
+            <one-to-many class="hibernate.pojo.TblVehicleFlight" />
+        </set>
+    </class>
+</hibernate-mapping>

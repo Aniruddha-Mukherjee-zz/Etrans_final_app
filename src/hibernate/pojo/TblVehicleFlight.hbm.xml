@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 17, 2015 9:43:48 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="hibernate.pojo.TblVehicleFlight" table="tbl_vehicle_flight" schema="pr_inplant" optimistic-lock="version">
+        <id name="IVfid" type="big_decimal">
+            <column name="i_vfid" precision="32" scale="0" />
+            <generator class="native" />
+        </id>
+        <many-to-one name="tblCard" class="hibernate.pojo.TblCard" fetch="select">
+            <column name="c_card_id" length="32" not-null="true" />
+        </many-to-one>
+        <many-to-one name="tblEpos" class="hibernate.pojo.TblEpos" fetch="select">
+            <column name="i_machine_id" precision="50" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="tblMapping" class="hibernate.pojo.TblMapping" fetch="select">
+            <column name="i_trip_id" precision="50" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="dtTime" type="timestamp">
+            <column name="dt_time" length="29" />
+        </property>
+        <property name="TModelNo" type="string">
+            <column name="t_model_no" />
+        </property>
+        <property name="TDataStatus" type="string">
+            <column name="t_data_status" />
+        </property>
+        <property name="TEvent" type="string">
+            <column name="t_event" />
+        </property>
+    </class>
+</hibernate-mapping>

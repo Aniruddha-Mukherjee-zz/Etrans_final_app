@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 17, 2015 9:43:48 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="hibernate.pojo.TblCard" table="tbl_card" schema="pr_inplant" optimistic-lock="version">
+        <id name="CCardId" type="string">
+            <column name="c_card_id" length="32" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="tblPlant" class="hibernate.pojo.TblPlant" fetch="select">
+            <column name="i_plant_id" precision="32" scale="0" not-null="true" />
+        </many-to-one>
+        <set name="tblVehicleFlights" table="tbl_vehicle_flight" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="c_card_id" length="32" not-null="true" />
+            </key>
+            <one-to-many class="hibernate.pojo.TblVehicleFlight" />
+        </set>
+        <set name="tblMappings" table="tbl_mapping" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="c_card_id" length="32" not-null="true" />
+            </key>
+            <one-to-many class="hibernate.pojo.TblMapping" />
+        </set>
+    </class>
+</hibernate-mapping>

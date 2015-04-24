@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 17, 2015 9:43:48 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="hibernate.pojo.TblData" table="tbl_data" schema="pr_inplant" optimistic-lock="version">
+        <id name="IDataId" type="big_decimal">
+            <column name="i_data_id" precision="131089" scale="0" />
+            <generator class="assigned" />
+        </id>
+        <property name="eposData" type="string">
+            <column name="epos_data" not-null="true" />
+        </property>
+        <property name="seen" type="boolean">
+            <column name="seen" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>
