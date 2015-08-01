@@ -10,6 +10,7 @@ import hibernate.pojo.TblData;
 import java.security.AccessControlContext;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,21 +38,18 @@ public class Alpha_module implements Runnable {
        Data_handler dh=new Data_handler();
        
        //System.out.println("\nworking");
-       
-       List list=dh.run_query("FROM TblData WHERE seen=false", number_of_threads);
+       String hql[]={"FROM TblData WHERE seen=false"};
+       List list=dh.run_query(hql, number_of_threads,false);
         
         Iterator it=list.iterator();
         
         //System.out.println(it.hasNext());
         
-        while (it.hasNext()) {
-           
-               //if(it.hasNext()==false)  break;
+        while (it.hasNext()) {                       
+               
                TblData data=(TblData) it.next();
-              // display d=new display(data);
              Beta_module eph=new Beta_module(data)   ;         
             eph.run();
-             //System.out.println("status2 = " + t.isAlive());
         }
        
 

@@ -67,7 +67,7 @@ public class Data_handler extends sample_helper{
 
   public void mark_seen_as_true(int id)
   {
-      session=hibernate.NewHibernateUtil.getSessionFactory().openSession();
+     session=hibernate.NewHibernateUtil.getSessionFactory().openSession();
        
         
         Transaction tx = null;
@@ -76,6 +76,7 @@ public class Data_handler extends sample_helper{
             TblData map=(TblData) session.get(TblData.class,new BigDecimal(id));
            tx=session.beginTransaction();
            map.setSeen(true);
+            //map.setBIsActive(false);
            session.saveOrUpdate(map);
             tx.commit();
         }
@@ -90,7 +91,7 @@ public class Data_handler extends sample_helper{
         finally
         {
             session.close();
-         } 
+         }    
   }
     //@Override
     public TblData get_tuple(int data_id) {
@@ -122,5 +123,31 @@ public class Data_handler extends sample_helper{
     //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-
+public void mark_false(int id)
+  {
+     session=hibernate.NewHibernateUtil.getSessionFactory().openSession();               
+        Transaction tx = null;
+        try
+        {   
+            TblData map=(TblData) session.get(TblData.class,new BigDecimal(id));
+           tx=session.beginTransaction();
+           map.setSeen(false);
+            //map.setBIsActive(false);
+           session.saveOrUpdate(map);
+            tx.commit();
+        }
+        catch(Exception e)
+        {
+            //error_flag=true; 
+            if (tx != null) {
+                tx.rollback();
+            e.printStackTrace();
+        }
+        }
+        finally
+        {
+            session.close();
+         }    
+  }
+    
 }

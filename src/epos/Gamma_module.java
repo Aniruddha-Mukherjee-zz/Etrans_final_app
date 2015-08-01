@@ -69,7 +69,7 @@ public class Gamma_module {
    
     private int internal_use_time_function(int to,int from)
     {
-        int time=-1;
+        int time=0;
         if(to <0)   to=to*(-1);    
         if(from <0)   from=from*(-1);
         String x=""+to;

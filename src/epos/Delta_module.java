@@ -31,6 +31,14 @@ public class Delta_module {
    private  DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
    //private Date expected_time;
    
+private Date addMinutesToDate(int minutes, Date beforeTime)
+{
+    final long ONE_MINUTE_IN_MILLIS = 60000;//millisecs
+
+    long curTimeInMs = beforeTime.getTime();
+    Date afterAddingMins = new Date(curTimeInMs + (minutes * ONE_MINUTE_IN_MILLIS));
+    return afterAddingMins;
+}
 
     public Delta_module(TblMapping map, int machine_id, TblVehicleFlight last_swipe,Date date_time) 
     {
@@ -94,9 +102,13 @@ public class Delta_module {
                break;
             }             
         }
-       if(int_values[index]!=machine_id && index==int_values.length-1)
+        
+       if(index==-1)
        {
            //this node is not in the live path. vehicle has deviated from pre-determined path
+           //create an exception where expected time will be null
+           create_an_exception(machine_id, date_time, null);
+           return false;
        }
        
        if(int_values[index]==machine_id && index==int_values.length-1)
@@ -127,17 +139,37 @@ public class Delta_module {
        
         //System.out.println(str);
       //if this is 1st swipe,then lastswipe will be null and no need to call exception class
-         Date expected_time=new Date();
-        if(last_swipe!=null)
-        {
-            for(int i=0;i<index;i++)
-               //use gamma module to generate expected date;
-                create_an_exception(int_values[i], null,expected_time);
-        //create_an_exception();
-        }
-        //use gamma module to generate expected time
-        create_an_exception(int_values[index], date_time, expected_time);
+       Date expected_time = null;
+        if(last_swipe==null) 
+               expected_time =date_time;
         
+        else 
+        {
+            Gamma_module gamma=new Gamma_module(int_values, machine_id, last_swipe);
+            expected_time=addMinutesToDate(gamma.return_time(), date_time);
+        }
+            
+        //generate exceptions for missed swipes       
+            
+            for(int i=0;i<index;i++)               
+            {
+                if(last_swipe!=null)
+                {
+                Gamma_module gamma=new Gamma_module(int_values, int_values[i], last_swipe);                            
+                expected_time=addMinutesToDate(gamma.return_time(), date_time);
+            
+                create_an_exception(int_values[i], null,expected_time);
+                }
+        }
+       //genearate exception for late swipe i.e. arrival_time>expected time
+     if(last_swipe!=null) 
+     {
+
+        Gamma_module gamma=new Gamma_module(int_values, int_values[index], last_swipe); 
+        expected_time=addMinutesToDate(gamma.return_time(), date_time);
+        if(date_time.compareTo(expected_time)>0)
+                     create_an_exception(int_values[index], date_time, expected_time);
+     }
                      
        return is_last_node;
     

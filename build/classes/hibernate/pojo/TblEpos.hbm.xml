@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 17, 2015 9:43:48 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="hibernate.pojo.TblEpos" table="tbl_epos" schema="pr_inplant" optimistic-lock="version">
+        <id name="IMachineId" type="big_decimal">
+            <column name="i_machine_id" precision="30" scale="0" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="tblPlant" class="hibernate.pojo.TblPlant" fetch="select">
+            <column name="i_plant_id" precision="32" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="ITerminalId" type="big_decimal">
+            <column name="i_terminal_id" precision="32" scale="0" not-null="true" />
+        </property>
+        <property name="IGateNo" type="big_decimal">
+            <column name="i_gate_no" precision="50" scale="0" />
+        </property>
+        <property name="TGatewayName" type="string">
+            <column name="t_gateway_name" />
+        </property>
+        <property name="TLocation" type="string">
+            <column name="t_location" />
+        </property>
+        <property name="BBothways" type="boolean">
+            <column name="b_bothways" not-null="true" />
+        </property>
+        <property name="ITimeInBetween" type="big_decimal">
+            <column name="i_time_in_between" precision="30" scale="0" />
+        </property>
+        <set name="tblExceptionses" table="tbl_exceptions" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="i_machine_id" precision="30" scale="0" not-null="true" />
+            </key>
+            <one-to-many class="hibernate.pojo.TblExceptions" />
+        </set>
+        <set name="tblVehicleFlights" table="tbl_vehicle_flight" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="i_machine_id" precision="50" scale="0" not-null="true" />
+            </key>
+            <one-to-many class="hibernate.pojo.TblVehicleFlight" />
+        </set>
+        <set name="tblLinksesForITo" table="tbl_links" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="i_to" precision="30" scale="0" />
+            </key>
+            <one-to-many class="hibernate.pojo.TblLinks" />
+        </set>
+        <set name="tblLinksesForIFrom" table="tbl_links" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="i_from" precision="30" scale="0" />
+            </key>
+            <one-to-many class="hibernate.pojo.TblLinks" />
+        </set>
+    </class>
+</hibernate-mapping>

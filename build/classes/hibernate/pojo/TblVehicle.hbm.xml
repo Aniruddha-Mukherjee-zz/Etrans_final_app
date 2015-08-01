@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 17, 2015 9:43:48 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="hibernate.pojo.TblVehicle" table="tbl_vehicle" schema="pr_inplant" optimistic-lock="version">
+        <id name="TVehicleId" type="string">
+            <column name="t_vehicle_id" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="tblPlant" class="hibernate.pojo.TblPlant" fetch="select">
+            <column name="i_plant_id" precision="32" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="TChasisNo" type="string">
+            <column name="t_chasis_no" />
+        </property>
+        <property name="TVehicleType" type="string">
+            <column name="t_vehicle_type" />
+        </property>
+        <property name="ILoadCapacity" type="java.lang.Long">
+            <column name="i_load_capacity" precision="10" scale="0" />
+        </property>
+        <property name="TOwner" type="string">
+            <column name="t_owner" />
+        </property>
+        <property name="TNationalPermit" type="string">
+            <column name="t_national_permit" />
+        </property>
+        <property name="dtLicenseExpiryDate" type="timestamp">
+            <column name="dt_license_expiry_date" length="29" />
+        </property>
+        <set name="tblMappings" table="tbl_mapping" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="t_vehicle_id" not-null="true" />
+            </key>
+            <one-to-many class="hibernate.pojo.TblMapping" />
+        </set>
+    </class>
+</hibernate-mapping>

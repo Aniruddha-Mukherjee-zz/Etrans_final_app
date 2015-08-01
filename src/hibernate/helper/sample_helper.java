@@ -32,7 +32,7 @@ public class sample_helper {
      * @param n
      * @return
      */
-    public List run_query(String HQL_Query, int n)  {
+    private List run_query(String HQL_Query, int n)  {
           
  
    boolean error_flag=false;
@@ -43,7 +43,7 @@ public class sample_helper {
         //Iterator it=null;
         try
         {
-    if(n<0)   throw new Exception("Insert positive number");     
+    if(n<0)   return run_query(HQL_Query, n);     
     // org.hibernate.Transaction tx=session.beginTransaction();
             tx=session.beginTransaction();
             /*

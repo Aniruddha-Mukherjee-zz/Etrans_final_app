@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package epos;
+//import com.sun.xml.internal.ws.policy.PolicyMapUtil;
 import hibernate.helper.Data_handler;
 import  hibernate.pojo.*;
 import java.math.BigDecimal;
@@ -16,8 +17,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import hibernate.helper.Epos_handler;
 import hibernate.helper.Exceptions_handler;
+import hibernate.helper.LivePath_handler;
 import hibernate.helper.Mapping_handler;
 import hibernate.helper.Vehicle_flight_handler;
+import hibernate.helper.sample_helper;
 import java.text.DateFormat;
 import java.time.Instant;
 import java.util.Iterator;
@@ -40,8 +43,10 @@ public class Beta_module{
     private String card_no;
     private TblData data;
     //Time time_v;
-    Date date_time;
-    TblVehicleFlight last_swipe;
+    private Date date_time;
+    private TblVehicleFlight last_swipe=null;
+    private int trip_id;
+    
    
 
     public Beta_module(TblData dat) {
@@ -49,11 +54,13 @@ public class Beta_module{
     //this.original_string = original_string;   
     }  
     
+    
     /**
      *
      * @param Str
+     * @throws java.text.ParseException
      */
-    public void set_values(String Str) throws ParseException
+    private void set_values(String Str) throws ParseException
 {
     String values[]=Str.split(",");
     /*for(int i=0;i<8;i++)
@@ -69,22 +76,29 @@ public class Beta_module{
     card_no=values[5];
     //date_time = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").parse(values[7]+values[6]);
    date_time = new SimpleDateFormat("ddMMyyyyHHmmss").parse(values[7]+values[6]);
-}
-    public void save_this_swipe(boolean store_as_negative)
-    {
-       if(store_as_negative==true)  Mid=(-1)*Mid;           
-        //save the mapect
-           // to do that we need the trip_id from card_no                   
-           Mapping_handler mh=new Mapping_handler();
+   
+   Vehicle_flight_handler vfh=new Vehicle_flight_handler();
            
-           /*  Session session=hibernate.NewHibernateUtil.getSessionFactory().openSession();
-           Query query=session.createQuery("FROM TblMapping WHERE c_card_id= :id AND b_is_active=true ORDER BY dt_created DESC");
-           query.setParameter("id",card_no);
-           */
-           String hql_query[]={"FROM TblMapping WHERE c_card_id= :id AND b_is_active=true ORDER BY dt_created DESC","id",card_no};
-           List emp=mh.run_query(hql_query,1,false);
-//List  emp= query.setMaxResults(1).list();
+   String hql_query[]={"FROM TblVehicleFlight WHERE c_card_id= :id ORDER BY dt_time ASC", "id",card_no};
+           
+    List emp=vfh.run_query(hql_query,1,false);                     
+    // List l=vfh.run_query("FROM TblVehicleFlight WHERE c_card_id= :id ORDER BY dt_time ASC", 1);    //ORDER BY dt_time DESC"
+                
            Iterator it=emp.iterator();
+           try 
+           {
+               last_swipe=(TblVehicleFlight) it.next();
+               
+           } 
+           catch (Exception e)
+           {
+               //(last_swipe==null)    {   save_this_swipe(false);return;   }
+           }
+           
+       String hql_query2[]={"FROM TblMapping WHERE c_card_id= :id AND b_is_active=true ORDER BY dt_created DESC","id",card_no};
+           emp=new Mapping_handler().run_query(hql_query2,1,false);
+//List  emp= query.setMaxResults(1).list();
+            it=emp.iterator();
         
         try {  
           
@@ -94,33 +108,37 @@ public class Beta_module{
            
            TblMapping map=(TblMapping) it.next();
            
-           int trip_id=map.getITripId().intValueExact();
+            trip_id=map.getITripId().intValueExact();
+
+        } 
+        catch (Exception e) 
+       {
+           System.out.println(e.getMessage());
+            //Logger.getLogger(Beta_module.class.getName()).log(Level.SEVERE, null, ex);
+       }
            
-           Vehicle_flight_handler vfh=new Vehicle_flight_handler();          
+}
+    private void save_this_swipe(boolean store_as_negative)
+    {
+       if(store_as_negative==true)  Mid=(-1)*Mid;           
+                                                    
          
         String result="Failure";
         while (result.equals("Failure")) 
         {
-            result= vfh.insert_into_table(TModelNo, TDataStatus, TEvent, date_time, Mid, card_no,trip_id);
+            result= new Vehicle_flight_handler().insert_into_table(TModelNo, TDataStatus, TEvent, date_time, Mid, card_no,trip_id);
         }
                       
            //code to handle exceptions and call other functions
-                      Delta_module dm=new Delta_module(map,Mid,last_swipe,date_time);
+          Delta_module dm=new Delta_module(new Mapping_handler().get_tuple(trip_id),Mid,last_swipe,date_time);
                
              boolean islast=dm.handle_live_path_create_exceptions();
                   
                 if(islast==true)
                     {
-                        mh.close_trip(trip_id);
+                        new Mapping_handler().close_trip(trip_id);
                     }
-       
-           
-        } 
-        catch (Exception ex)
-        {
-            System.out.println(ex.getMessage());
-            //Logger.getLogger(Beta_module.class.getName()).log(Level.SEVERE, null, ex);
-       }
+                          
     }
     
   /*  void create_an_exception()
@@ -165,40 +183,13 @@ public class Beta_module{
        
        if(epos_map.getisBBothways()==false)
        {
- 
-               //retrieve the last swipe 
-           
-          /* { Session session=hibernate.NewHibernateUtil.getSessionFactory().openSession();
-                Query query=session.createQuery("FROM TblVehicleFlight WHERE c_card_id= :id ORDER BY dt_time DESC");
-                query.setParameter("id",card_no);
-                List emp= query.setMaxResults(1).list();
-            }*/
-           
-           Vehicle_flight_handler vfh=new Vehicle_flight_handler();
-           
-           String hql_query[]={"FROM TblVehicleFlight WHERE c_card_id= :id ORDER BY dt_time ASC", "id",card_no};
-           
-           List emp=vfh.run_query(hql_query,1,false);                     
-    // List l=vfh.run_query("FROM TblVehicleFlight WHERE c_card_id= :id ORDER BY dt_time ASC", 1);    //ORDER BY dt_time DESC"
-                
-           Iterator it=emp.iterator();
-           try 
-           {
-               last_swipe=(TblVehicleFlight) it.next();
-               
-           } 
-           catch (Exception e)
-           {
-               if(last_swipe==null)    {   save_this_swipe(false);return;   }
-           }
-            
-            
-            //if this swipe is first swipe, just save it
-                
-                
+        //if this swipe is first swipe, just save it
+    if(last_swipe==null)       save_this_swipe(false);
+    else {                                                  
                 //check Mid of last and this swipe                               
                 if(last_swipe.getTblEpos().getIMachineId().intValueExact()==Mid)
                 {
+                    if(is_in_live_path()==true) save_this_swipe(false);
                     //Mid of this swipe matches with Machineid of last swipe. 
                     //Multiple swipes in same machine 
                     //reject this swipe
@@ -209,9 +200,83 @@ public class Beta_module{
                    
                     save_this_swipe(false);
                 }                            
+    }
        }
        else
-       {
+       {                         
+           Session  session=hibernate.NewHibernateUtil.getSessionFactory().openSession();
+           int x=( (Long) session.createQuery("select count(*) from TblVehicleFlight WHERE i_machine_id ="+Mid+" OR i_machine_id ="+(-1)*Mid +"AND i_trip_id ="+trip_id).iterate().next() ).intValue();
+           //x indicates the number of swipes @ this machine by this card, in this trip 
+          
+           if(x%2==0)   
+           {
+               //this may be an inswipe or a repeat swipe since already even no of swipes has occured
+               if(is_in_live_path()==true)
+                                    save_this_swipe(false);
+               else
+               {
+                  
+           
+                   if(is_in_live_path()==false && last_swipe.getTblEpos().getIMachineId().intValueExact()==Mid )  
+                   {
+                       //System.out.println("working");
+                        //this is not in live path and machine id of last swipe is same as this swipe
+                       //hence repeat swipe @ same machine id
+                       //reject it
+                   }                   
+                   else
+                         save_this_swipe(false); 
+                      /*
+                       {
+                           //vehicle has deviated from predetermined path. hence swipe will be saved,exception will be generated, and expected time will  be null
+                           int plant_id=new Mapping_handler().get_tuple(trip_id).getTblPlant().getIPlantId().intValueExact();
+                           
+                          String result="Failure";
+                                while (result.equals("Failure")) 
+                                {            
+                                     result=new Exceptions_handler().insert_into_table(plant_id, trip_id,Mid,date_time,null,false, new Date());
+                                 }
+                       } */         
+                                 
+                   
+                                        
+               }
+           }
+               
+       else         
+           {
+                    //already an odd number of swipes has occured indicating this may be a out swipe
+              
+            String hq[]={"from TblVehicleFlight WHERE i_machine_id ="+Mid+" OR i_machine_id ="+(-1)*Mid +"AND i_trip_id ="+trip_id+" ORDER BY dt_time DESC" }; 
+            List l=new sample_helper().run_query(hq, 0,false);                           
+                Iterator ite=l.iterator();                            
+                if(ite.hasNext())
+                {
+                    TblVehicleFlight v=(TblVehicleFlight) ite.next();
+                  
+                    Date date1=date_time;
+                    Date date2=v.getDtTime();
+                    long time_diff_in_minutes=(date1.getTime()-date2.getTime());
+                     time_diff_in_minutes=time_diff_in_minutes/60000;
+                       
+                        if(time_diff_in_minutes>=v.getTblEpos().getITimeInBetween().intValueExact())
+                        {
+                           save_this_swipe(true);
+                           //this is an out swipe 
+                        }   
+                            
+                        else
+                        {
+                            //reject this swipe as this is an out- swipe
+                        }
+                
+                    
+               
+           }
+               
+       
+       }
+      /* {
             String hql_query[]={"FROM TblVehicleFlight WHERE c_card_id= :id ORDER BY dt_time ASC", "id",card_no};
            
             Vehicle_flight_handler vfh=new Vehicle_flight_handler();
@@ -297,13 +362,50 @@ public class Beta_module{
                            }
                         }
                 }
+       }    */
+             
+        //marks the boolean field in raw data table as false               
+    
        }
-              //marks the boolean field in raw data table as false
-                 Data_handler dh=new Data_handler();
+        Data_handler dh=new Data_handler();
                
-                 dh.mark_seen_as_true(data.getIDataId().intValueExact());                  
+                 dh.mark_seen_as_true(data.getIDataId().intValue());                  
                 return;
-    }
+ }
 
+private boolean is_in_live_path()
+{
 
+           
+    //int path_id=new Mapping_handler().get_tuple(trip_id).getTblLivePath().getIPathId().intValueExact();
+        
+        boolean is_last_node=false;
+        
+        //LivePath_handler lh=new LivePath_handler();
+        // TblLivePath tlp=lh.get_tuple(path_id);
+        TblLivePath tlp=new Mapping_handler().get_tuple(trip_id).getTblLivePath();
+        
+        String head=tlp.getTNext();
+         
+         String path=tlp.getTCurrPath();
+         
+         String values[]=path.split(",");
+         final int[] int_values = new int[values.length];
+   
+         for (int i=0; i < values.length; i++) 
+        int_values[i] = Integer.parseInt(values[i]); 
+         
+        for(int i=0;i<int_values.length;i++)
+        {
+            if(int_values[i]==Mid)
+            {
+               
+               return true;
+            }             
+        }
+         
+    
+       return false;
+}
+    
 }

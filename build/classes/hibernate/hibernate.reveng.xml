@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd">
+<hibernate-reverse-engineering>
+  <schema-selection match-catalog="Etrans" match-schema="pr_inplant"/>
+  <table-filter match-name="tbl_data"/>
+  <table-filter match-name="tbl_plant"/>
+  <table-filter match-name="tbl_live_path"/>
+  <table-filter match-name="tbl_users"/>
+  <table-filter match-name="tbl_paths"/>
+  <table-filter match-name="tbl_transporter"/>
+  <table-filter match-name="tbl_epos"/>
+  <table-filter match-name="tbl_links"/>
+  <table-filter match-name="tbl_exceptions"/>
+  <table-filter match-name="tbl_card"/>
+  <table-filter match-name="tbl_do"/>
+  <table-filter match-name="tbl_vehicle_flight"/>
+  <table-filter match-name="tbl_driver"/>
+  <table-filter match-name="tbl_process"/>
+  <table-filter match-name="tbl_mapping"/>
+  <table-filter match-name="tbl_vehicle"/>
+</hibernate-reverse-engineering>
